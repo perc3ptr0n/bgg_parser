@@ -1,20 +1,26 @@
 from time import sleep
 import pandas as pd
+import sys
 from selenium import webdriver
+from getpass import getpass
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+
+
+chrome_options = Options()
+chrome_options.add_argument("--headless")
 
 # global variables
 choose_from = 'wishlist'  # Want in Trade, Want To Play, Want To Buy, Wishlist, The Hotness, TOP 10 by Category, TOP 100-1000 BGG etc
 columns = ['game_name', 'link_on_bgg', 'game_id']
 games_table = pd.DataFrame(columns=columns)
 dump_path = 'games_info.csv'
-username = '****'  # enter here your username for BGG
-password = '****'  # enter here your password for BGG
 
 chromedriver_path = './chromedriver'  # Change this to your own chromedriver path!
-webdriver = webdriver.Chrome(executable_path=chromedriver_path)
+webdriver = webdriver.Chrome(executable_path=chromedriver_path, chrome_options=chrome_options)
 
 
-def login_to_bgg(webdriver, username, password):
+def login_to_bgg(webdriver):
     sleep(1)
     webdriver.get('https://boardgamegeek.com/')
     sleep(1)
@@ -23,17 +29,18 @@ def login_to_bgg(webdriver, username, password):
     button_sign_in = webdriver.find_element_by_css_selector(sign_in_selector)
     button_sign_in.click()
     sleep(1)
-
+    username = input("Enter your BGG username: ")
     username_el = webdriver.find_element_by_name('username')
     username_el.send_keys(username)
     password_el = webdriver.find_element_by_name('password')
-    password_el.send_keys(password)
+    password = getpass("Enter your BGG password: ")
+    password_el.send_keys()
     button_login = webdriver.find_element_by_css_selector(
         'body > div.modal.fade.ng-scope.ng-isolate-scope.in > div > div > form > div.modal-footer > button')
     button_login.click()
+    return username
 
-
-login_to_bgg(webdriver, username, password)
+username = login_to_bgg(webdriver)
 
 if choose_from == 'wishlist':
     link = 'https://boardgamegeek.com/wishlist/%s' % username
