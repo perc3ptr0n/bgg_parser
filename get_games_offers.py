@@ -14,7 +14,7 @@ offers_table = pd.DataFrame(columns=offers_columns)
 offers_path = 'offers_info.csv'
 
 games = list(games_table['game_id'])
-for id in games[:3]:
+for id in games:
     link = 'https://boardgamegeek.com/boardgame/%s/' % str(id)
     webdriver.get(link)
     sleep(1)
